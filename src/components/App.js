@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import Header from './Header.js';
-import Main from './Main.js';
-import Footer from './Footer.js';
-import PopupWithForm from './PopupWithForm.js';
-import ImagePopup from './ImagePopup.js';
-import api from '../utils/Api.js';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import EditProfilePopup from './EditProfilePopup.js';
-import EditAvatarPopup from './EditAvatarPopup.js';
-import AddPlacePopup from './AddPlacePopup';
+import React, { useState, useEffect } from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
 
-const App = _ => {
+import Login from "./Login";
+import Main from "./Main.js";
+import Footer from "./Footer.js";
+import Header from "./Header.js";
+import api from "../utils/Api.js";
+import Register from "./Register";
+import ImagePopup from "./ImagePopup.js";
+import AddPlacePopup from "./AddPlacePopup";
+import ProtectedRoute from "./ProtectedRoute";
+import PopupWithForm from "./PopupWithForm.js";
+import EditAvatarPopup from "./EditAvatarPopup.js";
+import EditProfilePopup from "./EditProfilePopup.js";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
+
+const App = (_) => {
   //Задаем состояния компонента
   const [isEditProfilePopupOpen, setProfileStatus] = useState(false);
   const [isAddPlacePopupOpen, setPlaceStatus] = useState(false);
@@ -18,31 +23,33 @@ const App = _ => {
   const [isConfirmPopupOpen, setConfirmStatus] = useState(false);
   const [selectedCard, setSelectedCard] = useState({});
   const [currentUser, setCurrentUser] = useState({});
-  const [currentCardId, setCurrentCardId] = useState('');
+  const [currentCardId, setCurrentCardId] = useState("");
   const [cards, setCards] = useState([]);
+  const [isLogin, setIsLogin] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   //Берем данные профайла для контекста
-  useEffect(_ => {
+  useEffect((_) => {
     api
       .getProfileInformation()
-      .then(userData => {
+      .then((userData) => {
         setCurrentUser(userData);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
   //Запрос к API для получения карточек
-  useEffect(_ => {
-    const getCards = api.getInitialCards('cards');
+  useEffect((_) => {
+    const getCards = api.getInitialCards("cards");
     getCards
-      .then(dataCard => {
+      .then((dataCard) => {
         setCards(dataCard);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
   //Изменения состояния для закрытия попапов
-  const closeAllPopups = _ => {
+  const closeAllPopups = (_) => {
     setAvatarStatus(false);
     setPlaceStatus(false);
     setProfileStatus(false);
@@ -57,75 +64,75 @@ const App = _ => {
 
   //Проверяем лайки, меняем статус запросом к api и создаем новый массив карточек в стейт
   const handleCardLike = ({ likes, idCard }) => {
-    const isLiked = likes.some(like => like._id === currentUser._id);
+    const isLiked = likes.some((like) => like._id === currentUser._id);
     api
       .changeLikeCardStatus(idCard, !isLiked)
-      .then(newCard => {
-        const newCards = cards.map(singleCard =>
+      .then((newCard) => {
+        const newCards = cards.map((singleCard) =>
           singleCard._id === idCard ? newCard : singleCard
         );
         setCards(newCards);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   //Удаление карточки запрос к api и обновление стейта
-  const handleCardDelete = evt => {
+  const handleCardDelete = (evt) => {
     evt.preventDefault();
     api
       .removeCard(currentCardId)
-      .then(_ => {
-        const newCardList = cards.filter(card => currentCardId !== card._id);
+      .then((_) => {
+        const newCardList = cards.filter((card) => currentCardId !== card._id);
         setCards(newCardList);
         closeAllPopups();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   //Запрос к Api для изменения аватара
   const handleUpdateAvatar = ({ avatar }) => {
     api
       .updateUserAvatar({ avatar })
-      .then(UserData => {
+      .then((UserData) => {
         setCurrentUser(UserData);
         closeAllPopups();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   //Запрос к api для изменения профайла
   const handleUpdateUser = ({ name, about }) => {
     api
       .updateUserInformation({ name, about })
-      .then(UserData => {
+      .then((UserData) => {
         setCurrentUser(UserData);
         closeAllPopups();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   //Запрос к api для добавления карточки
   const handleAddPlaceSubmit = ({ name, link }) => {
     api
       .addNewCard({ name, link })
-      .then(newCard => {
+      .then((newCard) => {
         setCards([newCard, ...cards]);
         closeAllPopups();
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   };
 
   //Функции изменения состояния для открытия попапов
-  const handleEditAvatarClick = _ => {
+  const handleEditAvatarClick = (_) => {
     setAvatarStatus(true);
   };
-  const handleEditProfileClick = _ => {
+  const handleEditProfileClick = (_) => {
     setProfileStatus(true);
   };
-  const handleAddPlaceClick = _ => {
+  const handleAddPlaceClick = (_) => {
     setPlaceStatus(true);
   };
-  const handleConfirmClick = cardId => {
+  const handleConfirmClick = (cardId) => {
     setCurrentCardId(cardId);
     setConfirmStatus(true);
   };
@@ -134,16 +141,33 @@ const App = _ => {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header />
-          <Main
-            onCardClick={handleCardClick}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardsLike={handleCardLike}
-            onCardsDelete={handleConfirmClick}
-            cards={cards}
-          />
+          <Header isLoggedIn={isLogin} />
+          <Switch>
+            <Route path="/sign-in">
+              <Login />
+            </Route>
+            <Route path="/sign-up">
+              <Register />
+            </Route>
+            <ProtectedRoute
+              path="/main"
+              loggedIn={loggedIn}
+              component={Main}
+              onCardClick={handleCardClick}
+              onEditProfile={handleEditProfileClick}
+              onAddPlace={handleAddPlaceClick}
+              onEditAvatar={handleEditAvatarClick}
+              onCardsLike={handleCardLike}
+              onCardsDelete={handleConfirmClick}
+              cards={cards}
+            />
+            {/* <Route path="/main">
+              <Main /> */}
+            {/* </Route> */}
+            <Route exact path="/">
+              {loggedIn ? <Redirect to="/main" /> : <Redirect to="/sign-in" />}
+            </Route>
+          </Switch>
           <Footer />
         </div>
 

@@ -1,0 +1,13 @@
+.header__switch {
+  font-size: 18px;
+  line-height: 22px;
+  text-align: right;
+  color: #fff;
+  text-emphasis: none;
+}
+
+@media screen and (max-width: 690px) {
+  .header__switch {
+    margin-right: 27px;
+  }
+}

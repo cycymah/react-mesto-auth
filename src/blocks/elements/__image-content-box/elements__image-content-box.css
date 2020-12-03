@@ -1,0 +1,10 @@
+.elements__image-content-box {
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
+  padding: 21px 21px 24px;
+  align-content: center;
+}

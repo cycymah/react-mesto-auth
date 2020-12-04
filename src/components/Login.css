@@ -61,6 +61,7 @@
   line-height: 22px;
   transition: 0.5s ease-in-out;
   cursor: pointer;
+  outline: none;
 }
 
 .login__submit-btn:hover {
@@ -70,7 +71,7 @@
 
 @media screen and (max-width: 480px) {
   .page__authorization {
-    max-width: none%;
+    max-width: none;
     width: none;
     margin: 0 30px;
   }

@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Switch, Redirect, useHistory } from "react-router-dom";
 
 import Login from "./Login";
 import Main from "./Main.js";
-import Footer from "./Footer.js";
 import Header from "./Header.js";
 import api from "../utils/Api.js";
 import Register from "./Register";
@@ -14,8 +13,11 @@ import PopupWithForm from "./PopupWithForm.js";
 import EditAvatarPopup from "./EditAvatarPopup.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import { authApi, authApiCheck } from "../utils/Auth";
 
 const App = (_) => {
+  let history = new useHistory();
+
   //Задаем состояния компонента
   const [isEditProfilePopupOpen, setProfileStatus] = useState(false);
   const [isAddPlacePopupOpen, setPlaceStatus] = useState(false);
@@ -25,8 +27,10 @@ const App = (_) => {
   const [currentUser, setCurrentUser] = useState({});
   const [currentCardId, setCurrentCardId] = useState("");
   const [cards, setCards] = useState([]);
-  const [isLogin, setIsLogin] = useState(true);
+
+  const [isRegister, setIsRegister] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
+  const [emailFromServ, setEmailFromServ] = useState("");
 
   //Берем данные профайла для контекста
   useEffect((_) => {
@@ -47,6 +51,43 @@ const App = (_) => {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  useEffect(() => {
+    const getLocalToken = localStorage.getItem("jwt");
+    if (getLocalToken) {
+      authApiCheck(getLocalToken).then((res) => {
+        if (res.data.email) {
+          setEmailFromServ(res.data.email);
+          setLoggedIn(true);
+          history.push("/");
+        }
+      });
+    }
+  }, []);
+
+  // Берем токен
+  const getToken = (registrationPass, registrationEmail) => {
+    authApi(registrationPass, registrationEmail, "signin")
+      .then((token) => {
+        if (token.token) {
+          localStorage.setItem("jwt", token.token);
+          setLoggedIn(true);
+          history.push("/");
+        }
+      })
+      .catch(console.error);
+  };
+
+  const changeRegister = () => {
+    setIsRegister(!isRegister);
+  };
+
+  //Выходим
+  const logOut = () => {
+    localStorage.removeItem("jwt");
+    setLoggedIn(false);
+    history.push("/");
+  };
 
   //Изменения состояния для закрытия попапов
   const closeAllPopups = (_) => {
@@ -141,16 +182,23 @@ const App = (_) => {
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
         <div className="page__container">
-          <Header isLoggedIn={isLogin} />
+          <Header
+            loggedIn={loggedIn}
+            isRegister={isRegister}
+            setIsRegister={setIsRegister}
+            logOut={logOut}
+            emailFromServ={emailFromServ}
+            changeRegister={changeRegister}
+          />
           <Switch>
             <Route path="/sign-in">
-              <Login />
+              <Login getToken={getToken} />
             </Route>
             <Route path="/sign-up">
               <Register />
             </Route>
             <ProtectedRoute
-              path="/main"
+              path="/"
               loggedIn={loggedIn}
               component={Main}
               onCardClick={handleCardClick}
@@ -161,14 +209,14 @@ const App = (_) => {
               onCardsDelete={handleConfirmClick}
               cards={cards}
             />
-            {/* <Route path="/main">
-              <Main /> */}
-            {/* </Route> */}
             <Route exact path="/">
-              {loggedIn ? <Redirect to="/main" /> : <Redirect to="/sign-in" />}
+              {loggedIn ? (
+                <Redirect to="/" />
+              ) : (
+                <Redirect to="/sign-in" /> || <Redirect to="/sign-up" />
+              )}
             </Route>
           </Switch>
-          <Footer />
         </div>
 
         {/* Попап профайла */}

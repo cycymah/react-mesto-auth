@@ -9,21 +9,6 @@ const Header = ({
   logOut,
   changeDirection,
 }) => {
-  const buttonSwitcher = () => {
-    if (isRegister) {
-      return (
-        <a href="/sign-in" className="header__switch" onClick={changeDirection}>
-          Вход
-        </a>
-      );
-    } else {
-      return (
-        <a href="/sign-up" className="header__switch" onClick={changeDirection}>
-          Регистрация
-        </a>
-      );
-    }
-  };
   return (
     <header className="header page__header">
       <img src={logo} alt="Логотип место Россия" className="header__logo" />
@@ -35,8 +20,6 @@ const Header = ({
           </span>
         </div>
       ) : (
-        //   buttonSwitcher()
-        // )
         <span className="header__switch" onClick={changeRegister}>
           {isRegister ? "Регистрация" : "Вход"}
         </span>

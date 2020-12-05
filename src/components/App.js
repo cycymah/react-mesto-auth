@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Route, Switch, Redirect, useHistory } from "react-router-dom";
+import { Route, Switch, useHistory } from "react-router-dom";
 
 import Login from "./Login";
 import Main from "./Main.js";
@@ -14,6 +14,7 @@ import EditAvatarPopup from "./EditAvatarPopup.js";
 import EditProfilePopup from "./EditProfilePopup.js";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import { authApi, authApiCheck } from "../utils/Auth";
+import PopupNotification from "./PopupNotification";
 
 const App = (_) => {
   let history = new useHistory();
@@ -27,6 +28,9 @@ const App = (_) => {
   const [currentUser, setCurrentUser] = useState({});
   const [currentCardId, setCurrentCardId] = useState("");
   const [cards, setCards] = useState([]);
+
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [loadingOk, setLoadingOk] = useState(true);
 
   const [isRegister, setIsRegister] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -53,17 +57,17 @@ const App = (_) => {
   }, []);
 
   useEffect(() => {
-    console.log("sdfsd");
-    console.log(isRegister);
     const getLocalToken = localStorage.getItem("jwt");
     if (getLocalToken) {
-      authApiCheck(getLocalToken).then((res) => {
-        if (res.data.email) {
-          setEmailFromServ(res.data.email);
-          setLoggedIn(true);
-          history.push("/");
-        }
-      });
+      authApiCheck(getLocalToken)
+        .then((res) => {
+          if (res.data) {
+            setEmailFromServ(res.data.email);
+            setLoggedIn(true);
+            history.push("/");
+          }
+        })
+        .catch((err) => console.log(err));
     }
   }, []);
 
@@ -77,7 +81,23 @@ const App = (_) => {
           history.push("/");
         }
       })
-      .catch(console.error);
+      .catch((err) => {
+        console.log("first err", err);
+      });
+  };
+
+  const registationOnSubmit = (registrationPass, registrationEmail) => {
+    setLoadingOk(true);
+    authApi(registrationPass, registrationEmail, "signup")
+      .then((res) => {
+        if (res.data) {
+          setIsNotificationOpen(true);
+        }
+      })
+      .catch((err) => {
+        setLoadingOk(false);
+        setIsNotificationOpen(true);
+      });
   };
 
   const changeRegister = () => {
@@ -103,6 +123,7 @@ const App = (_) => {
     setProfileStatus(false);
     setSelectedCard(false);
     setConfirmStatus(false);
+    setIsNotificationOpen(false);
   };
 
   //Функция для открытия увеличенной карточки по клику
@@ -203,7 +224,7 @@ const App = (_) => {
               <Login getToken={getToken} />
             </Route>
             <Route path="/sign-up">
-              <Register />
+              <Register registationOnSubmit={registationOnSubmit} />
             </Route>
             <ProtectedRoute
               exact
@@ -218,16 +239,6 @@ const App = (_) => {
               onCardsDelete={handleConfirmClick}
               cards={cards}
             />
-            <Route>
-              {isRegister ? (
-                <Redirect to="/sign-up" />
-              ) : (
-                <Redirect to="/sign-in" />
-              )}
-            </Route>
-            {/* <Route>
-              {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
-            </Route> */}
           </Switch>
         </div>
 
@@ -261,6 +272,12 @@ const App = (_) => {
           isOpen={isConfirmPopupOpen}
           onSubmit={handleCardDelete}
         />
+
+        <PopupNotification
+          isOpen={isNotificationOpen}
+          onClose={closeAllPopups}
+          loadingOk={loadingOk}
+        ></PopupNotification>
 
         {/* Попап увеличенной картинки  */}
         <ImagePopup card={selectedCard} onClose={closeAllPopups} />

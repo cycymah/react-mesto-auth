@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./Register.css";
 import { authApi } from "../utils/Auth";
 
-const Register = ({ isLoginOpen }) => {
+const Register = ({ isLoginOpen, registationOnSubmit }) => {
   const [registrationEmail, setRegistrationEmail] = useState("");
   const [registrationPass, setRegistrationPass] = useState("");
 
@@ -14,7 +14,7 @@ const Register = ({ isLoginOpen }) => {
   };
   const submitRegistration = (evt) => {
     evt.preventDefault();
-    authApi(registrationPass, registrationEmail, "signup");
+    registationOnSubmit(registrationPass, registrationEmail);
   };
 
   return (

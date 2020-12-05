@@ -9,7 +9,7 @@ const authApi = (password, email, sign) => {
     },
     body: JSON.stringify({ email, password }),
   }).then((res) => {
-    if (res.status === 200) {
+    if (res.status === 200 || res.status === 201) {
       return res.json();
     }
     return Promise.reject(`Ошибка: ${res.status}`);

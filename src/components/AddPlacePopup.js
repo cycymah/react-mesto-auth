@@ -1,28 +1,27 @@
-import React, { useState } from 'react';
-import PopupWithForm from './PopupWithForm';
+import React, { useState } from "react";
+import PopupWithForm from "./PopupWithForm";
 
 const AddPlacePopup = ({ isOpen, onClose, onCardAdd }) => {
-  const [cardName, setCardName] = useState('');
-  const [cardLink, setCardLink] = useState('');
-  // const [textButton, setTextButton] = useState('Создать');
+  const [cardName, setCardName] = useState("");
+  const [cardLink, setCardLink] = useState("");
 
   //Получаем значения инпутов и кладем в стейт
-  const handleChangeName = evt => {
+  const handleChangeName = (evt) => {
     const cardNameValue = evt.target.value;
     setCardName(cardNameValue);
   };
 
-  const handleChangeLink = evt => {
+  const handleChangeLink = (evt) => {
     const cardLinkValue = evt.target.value;
     setCardLink(cardLinkValue);
   };
 
   //По субмиту передаем в api и обнуляем стейт
-  const handleSubmit = evt => {
+  const handleSubmit = (evt) => {
     evt.preventDefault();
     onCardAdd({ name: cardName, link: cardLink });
-    setCardLink('');
-    setCardName('');
+    setCardLink("");
+    setCardName("");
   };
 
   return (
@@ -44,7 +43,7 @@ const AddPlacePopup = ({ isOpen, onClose, onCardAdd }) => {
           minLength="1"
           maxLength="30"
           required
-          value={cardName || ''}
+          value={cardName || ""}
           onChange={handleChangeName}
         />
         <span className="form__input-error" id="title-input-error"></span>
@@ -57,7 +56,7 @@ const AddPlacePopup = ({ isOpen, onClose, onCardAdd }) => {
           name="link"
           type="URL"
           required
-          value={cardLink || ''}
+          value={cardLink || ""}
           onChange={handleChangeLink}
         />
         <span className="form__input-error" id="src-input-error"></span>

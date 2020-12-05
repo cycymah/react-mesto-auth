@@ -1,0 +1,13 @@
+.register {
+  margin-top: 60px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 460px;
+  max-width: 358px;
+  width: 100%;
+  font-family: Inter;
+  font-style: normal;
+  font-weight: 900;
+}

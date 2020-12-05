@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import "./Register.css";
-import { authApi } from "../utils/Auth";
 
 const Register = ({ isLoginOpen, registationOnSubmit }) => {
   const [registrationEmail, setRegistrationEmail] = useState("");

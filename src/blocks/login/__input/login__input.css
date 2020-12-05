@@ -1,0 +1,23 @@
+.login__input {
+  width: 100%;
+  border: 0;
+  background-color: black;
+  border-bottom: 2px solid #cccc;
+  min-height: 27px;
+  outline: none;
+  padding: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-bottom: 30px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.login__input::placeholder {
+  color: #ccc;
+  font-size: 14px;
+  line-height: 17px;
+}

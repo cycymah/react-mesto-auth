@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "./Login.css";
 
 const Login = ({ getToken }) => {
   const [registrationEmail, setRegistrationEmail] = useState("");

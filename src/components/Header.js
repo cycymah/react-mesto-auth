@@ -7,7 +7,6 @@ const Header = ({
   changeRegister,
   emailFromServ,
   logOut,
-  changeDirection,
 }) => {
   return (
     <header className="header page__header">

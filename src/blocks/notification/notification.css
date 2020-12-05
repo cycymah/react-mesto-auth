@@ -1,0 +1,19 @@
+.notification {
+  display: flex;
+  max-width: 430px;
+  width: 100%;
+  min-height: 330px;
+  background-color: white;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  z-index: 100;
+  box-sizing: border-box;
+  font-family: "Inter", "Arial", sans-serif;
+  padding: 35px;
+  margin: 0 45px;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+}

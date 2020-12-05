@@ -1,0 +1,8 @@
+.register__submit-box {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 17px;
+  text-align: center;
+  color: #ffffff;
+}

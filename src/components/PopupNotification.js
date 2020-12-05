@@ -1,5 +1,4 @@
 import React from "react";
-import "./PopupNotification.css";
 import ok from "../images/ok.svg";
 import notok from "../images/notok.svg";
 

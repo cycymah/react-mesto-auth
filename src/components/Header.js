@@ -7,25 +7,39 @@ const Header = ({
   changeRegister,
   emailFromServ,
   logOut,
+  changeDirection,
 }) => {
+  const buttonSwitcher = () => {
+    if (isRegister) {
+      return (
+        <a href="/sign-in" className="header__switch" onClick={changeDirection}>
+          Вход
+        </a>
+      );
+    } else {
+      return (
+        <a href="/sign-up" className="header__switch" onClick={changeDirection}>
+          Регистрация
+        </a>
+      );
+    }
+  };
   return (
     <header className="header page__header">
       <img src={logo} alt="Логотип место Россия" className="header__logo" />
       {loggedIn ? (
         <div class="header__login-box">
           <p className="header__email">{emailFromServ}</p>
-          <a className="header__switch" href="" onClick={logOut}>
+          <span className="header__switch" onClick={logOut}>
             Выйти
-          </a>
+          </span>
         </div>
       ) : (
-        <a
-          href={isRegister ? "/sign-up" : "/sign-in"}
-          className="header__switch"
-          onClick={changeRegister}
-        >
+        //   buttonSwitcher()
+        // )
+        <span className="header__switch" onClick={changeRegister}>
           {isRegister ? "Регистрация" : "Вход"}
-        </a>
+        </span>
       )}
     </header>
   );

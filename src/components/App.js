@@ -53,6 +53,8 @@ const App = (_) => {
   }, []);
 
   useEffect(() => {
+    console.log("sdfsd");
+    console.log(isRegister);
     const getLocalToken = localStorage.getItem("jwt");
     if (getLocalToken) {
       authApiCheck(getLocalToken).then((res) => {
@@ -80,6 +82,11 @@ const App = (_) => {
 
   const changeRegister = () => {
     setIsRegister(!isRegister);
+    if (isRegister) {
+      history.push("/sign-up");
+    } else {
+      history.push("/sign-in");
+    }
   };
 
   //Выходим
@@ -190,6 +197,7 @@ const App = (_) => {
             emailFromServ={emailFromServ}
             changeRegister={changeRegister}
           />
+
           <Switch>
             <Route path="/sign-in">
               <Login getToken={getToken} />
@@ -198,6 +206,7 @@ const App = (_) => {
               <Register />
             </Route>
             <ProtectedRoute
+              exact
               path="/"
               loggedIn={loggedIn}
               component={Main}
@@ -209,13 +218,16 @@ const App = (_) => {
               onCardsDelete={handleConfirmClick}
               cards={cards}
             />
-            <Route exact path="/">
-              {loggedIn ? (
-                <Redirect to="/" />
+            <Route>
+              {isRegister ? (
+                <Redirect to="/sign-up" />
               ) : (
-                <Redirect to="/sign-in" /> || <Redirect to="/sign-up" />
+                <Redirect to="/sign-in" />
               )}
             </Route>
+            {/* <Route>
+              {loggedIn ? <Redirect to="/" /> : <Redirect to="/sign-in" />}
+            </Route> */}
           </Switch>
         </div>
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Register = ({ isLoginOpen, registationOnSubmit }) => {
   const [registrationEmail, setRegistrationEmail] = useState("");
@@ -40,9 +41,9 @@ const Register = ({ isLoginOpen, registationOnSubmit }) => {
         </button>
         <span className="register__text">
           Уже зарегистрированы?{" "}
-          <a className="register__link" href="/sign-in">
+          <Link className="register__link" to="/sign-in">
             Войти
-          </a>
+          </Link>
         </span>
       </div>
     </form>

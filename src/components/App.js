@@ -17,7 +17,7 @@ import { authApi, authApiCheck } from "../utils/Auth";
 import PopupNotification from "./PopupNotification";
 
 const App = (_) => {
-  let history = new useHistory();
+  const history = new useHistory();
 
   //Задаем состояния компонента
   const [isEditProfilePopupOpen, setProfileStatus] = useState(false);
@@ -32,7 +32,6 @@ const App = (_) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [loadingOk, setLoadingOk] = useState(true);
 
-  const [isRegister, setIsRegister] = useState(true);
   const [loggedIn, setLoggedIn] = useState(false);
   const [emailFromServ, setEmailFromServ] = useState("");
 
@@ -57,9 +56,9 @@ const App = (_) => {
   }, []);
 
   useEffect(() => {
-    const getLocalToken = localStorage.getItem("jwt");
-    if (getLocalToken) {
-      authApiCheck(getLocalToken)
+    const localToken = localStorage.getItem("jwt");
+    if (localToken) {
+      authApiCheck(localToken)
         .then((res) => {
           if (res.data) {
             setEmailFromServ(res.data.email);
@@ -92,6 +91,7 @@ const App = (_) => {
       .then((res) => {
         if (res.data) {
           setIsNotificationOpen(true);
+          history.push("/sign-in");
         }
       })
       .catch((err) => {
@@ -100,20 +100,11 @@ const App = (_) => {
       });
   };
 
-  const changeRegister = () => {
-    setIsRegister(!isRegister);
-    if (isRegister) {
-      history.push("/sign-up");
-    } else {
-      history.push("/sign-in");
-    }
-  };
-
   //Выходим
   const logOut = () => {
     localStorage.removeItem("jwt");
     setLoggedIn(false);
-    history.push("/");
+    history.push("/sign-in");
   };
 
   //Изменения состояния для закрытия попапов
@@ -212,11 +203,8 @@ const App = (_) => {
         <div className="page__container">
           <Header
             loggedIn={loggedIn}
-            isRegister={isRegister}
-            setIsRegister={setIsRegister}
             logOut={logOut}
             emailFromServ={emailFromServ}
-            changeRegister={changeRegister}
           />
 
           <Switch>
